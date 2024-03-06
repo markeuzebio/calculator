@@ -26,6 +26,8 @@ button {
 
 .display {
     text-align: end;
+    font-size: x-large;
+    font-weight: bold;
 }
 
 .row {
