@@ -1,0 +1,32 @@
+*, *::after, *::before {
+    box-sizing: inherit;
+}
+
+html {
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
+.display {
+    text-align: end;
+}
+
+.row {
+    display: flex;
+}
+
+.number {
+    flex: 1 0 auto;
+}
