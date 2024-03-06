@@ -1,4 +1,5 @@
-
+const display_value       = document.querySelector(".display");
+const calculator_numbers  = document.querySelectorAll(".number");
 
 function add(a, b)
 {
@@ -44,3 +45,14 @@ function operate(a, operator, b)
         break;
     }
 }
+
+function updateDisplay(number) {
+    if(display_value.textContent === "0")
+        display_value.textContent = number;
+    else
+        display_value.textContent += number;
+}
+
+calculator_numbers.forEach(function (calculator_number) {
+    calculator_number.addEventListener("click", () => updateDisplay(calculator_number.textContent));
+});
