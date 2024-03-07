@@ -3,6 +3,7 @@ const btn_numbers         = document.querySelectorAll(".number");
 const btn_backspace       = document.querySelector("#backspace");
 const btn_clear           = document.querySelector("#clear");
 const btn_operators       = document.querySelectorAll(".operator");
+const btn_equality        = document.querySelector("#equality");
 
 let expression     = [];
 let op_btn_pressed = false;
@@ -24,7 +25,7 @@ function multiply(a, b)
 
 function divide(a, b)
 {
-    return a / b;
+    return Math.round(a / b * 10) / 10;
 }
 
 function remainder(a, b)
@@ -95,7 +96,6 @@ function getDisplayValue()
 
 function calculateExpression()
 {
-    console.log(expression);
     return operate(expression[0], expression[1], expression[2]);
 }
 
@@ -132,7 +132,6 @@ btn_operators.forEach(function (btn_operator) {
             // Calculate intermediate value 
             expression.push(getDisplayValue());
             expression_result = calculateExpression();
-            console.log(expression_result);
             display_value.textContent = expression_result;
 
             expression = [];
@@ -144,3 +143,14 @@ btn_operators.forEach(function (btn_operator) {
         op_btn_pressed = true;
     });
 })
+
+btn_equality.addEventListener("click", function () {
+    // Just calculates if there's an expression to.
+    if(expression[0] != undefined && expression[1] != undefined)
+    {
+        expression.push(getDisplayValue());
+        display_value.textContent = calculateExpression();
+        expression = [];
+        op_btn_pressed = true;
+    }
+});
