@@ -11,27 +11,48 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    margin: 0;
     height: 100vh;
+    background-color: rgb(41, 41, 47);
 }
 
 button {
     width: 3em;
     height: 3em;
+    font-size: 20px;
+    font-weight: bold;
+    border-style: none;
+    cursor: pointer;
+}
+
+button, .container {
+    border-radius: 12px;
+}
+
+.operator, #clear, #backspace, #equality {
+    background-color: #FF8911;
 }
 
 .container {
     display: flex;
     flex-direction: column;
+    gap: 1em;
+    padding: 1em;
+    background-color: black;
 }
 
 .display {
     text-align: end;
-    font-size: x-large;
+    font-size: 1.5em;
     font-weight: bold;
+    background-color: grey;
+    border-radius: 5px;
+    padding: 0.7em;
 }
 
 .row {
     display: flex;
+    gap: 0.5em;
 }
 
 .number {

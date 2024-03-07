@@ -4,6 +4,7 @@ const btn_backspace       = document.querySelector("#backspace");
 const btn_clear           = document.querySelector("#clear");
 const btn_operators       = document.querySelectorAll(".operator");
 const btn_equality        = document.querySelector("#equality");
+const btn_dot             = document.querySelector("#dot");
 
 let expression     = [];
 let op_btn_pressed = false;
@@ -25,7 +26,7 @@ function multiply(a, b)
 
 function divide(a, b)
 {
-    return Math.round(a / b * 10) / 10;
+    return a / b;
 }
 
 function remainder(a, b)
@@ -35,38 +36,48 @@ function remainder(a, b)
 
 function operate(a, operator, b)
 {
+    let result;
+
     switch(operator)
     {
         case '+':
-            return add(a, b);
+            result = add(a, b);
         break;
 
         case '-':
-            return subtract(a, b);
+            result = subtract(a, b);
         break;
 
         case '*':
-            return multiply(a, b);
+            result = multiply(a, b);
         break;
 
         case '/':
             if(b == 0)
-                return NaN;
+                result = NaN;
 
-            return divide(a, b);
+            result = divide(a, b);
         break;
 
         case '%':
             if(b == 0)
-                return NaN;
+                result = NaN;
 
-            return remainder(a, b);
+            result = remainder(a, b);
         break;
     }
+
+    return Math.round(result * 10) / 10;
 }
 
 function addNumberDisplay(number)
 {
+    if(op_btn_pressed)
+    {
+        clearDisplay();
+        op_btn_pressed = false;
+    }
+
     if(display_value.textContent === "0")
         display_value.textContent = number;
     else
@@ -94,22 +105,53 @@ function getDisplayValue()
     return Number(display_value.textContent);
 }
 
-function calculateExpression()
+function calculateOperation()
 {
     return operate(expression[0], expression[1], expression[2]);
 }
 
+function calculateExpression()
+{
+    // Just calculates if there's an expression to.
+    if(expression[0] != undefined && expression[1] != undefined)
+    {
+        expression.push(getDisplayValue());
+        display_value.textContent = calculateOperation();
+        expression = [];
+        op_btn_pressed = true;
+    }
+}
+
+function buildExpression(operator)
+{
+    // There's an expression waiting to be calculated already.
+    if(expression[0] != undefined)
+    {
+        let expression_result;
+
+        // Calculate intermediate value 
+        expression.push(getDisplayValue());
+        expression_result = calculateOperation();
+        display_value.textContent = expression_result;
+
+        expression = [];
+        expression.push(expression_result, operator);
+    }
+    else
+        expression.push(getDisplayValue(), operator);
+
+    op_btn_pressed = true;
+}
+
+function addDotDisplay()
+{
+    if(display_value.textContent.match(/\./) === null)
+        display_value.textContent += '.';
+}
+
 // Update display based on number clicked on calculator
 btn_numbers.forEach(function (btn_number) {
-    btn_number.addEventListener("click", function () {
-        if(op_btn_pressed)
-        {
-            clearDisplay();
-            op_btn_pressed = false;
-        }
-
-        addNumberDisplay(btn_number.textContent);
-    })
+    btn_number.addEventListener("click", () => addNumberDisplay(btn_number.textContent))
 });
 
 // Pop the last number written on display
@@ -123,34 +165,25 @@ btn_clear.addEventListener("click", function () {
 
 // For all operators clicked on calculator, update the expression
 btn_operators.forEach(function (btn_operator) {
-    btn_operator.addEventListener("click", function () {
-        // There's an expression waiting to be calculated already.
-        if(expression[0] != undefined)
-        {
-            let expression_result;
-
-            // Calculate intermediate value 
-            expression.push(getDisplayValue());
-            expression_result = calculateExpression();
-            display_value.textContent = expression_result;
-
-            expression = [];
-            expression.push(expression_result, btn_operator.textContent);
-        }
-        else
-            expression.push(getDisplayValue(), btn_operator.textContent);
-
-        op_btn_pressed = true;
-    });
+    btn_operator.addEventListener("click", () => buildExpression(btn_operator.textContent));
 })
 
-btn_equality.addEventListener("click", function () {
-    // Just calculates if there's an expression to.
-    if(expression[0] != undefined && expression[1] != undefined)
-    {
-        expression.push(getDisplayValue());
-        display_value.textContent = calculateExpression();
-        expression = [];
-        op_btn_pressed = true;
-    }
+btn_equality.addEventListener("click", calculateExpression);
+
+// ---------------- EXTRAS ---------------- //
+btn_dot.addEventListener("click", addDotDisplay);
+
+document.addEventListener("keydown", function (event) {
+    console.log(event);
+
+    if(event.code.match(/Digit[0-9]/) && event.shiftKey == false)
+        addNumberDisplay(event.key);
+    else if(event.code === "Period")
+        addDotDisplay();
+    else if(event.code === "Backspace")
+        removeLastNumberDisplay();
+    else if(event.key.match(/\+|\-|\*|\/|\%/))
+        buildExpression(event.key);
+    else if(event.key === "=")
+        calculateExpression();
 });
