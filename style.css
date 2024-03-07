@@ -31,10 +31,12 @@ button, .container {
 
 .operator, #clear, #backspace, #equality {
     background-color: #FF8911;
+    flex-shrink: 1;
 }
 
 .container {
     display: flex;
+    width: 290px;
     flex-direction: column;
     gap: 1em;
     padding: 1em;

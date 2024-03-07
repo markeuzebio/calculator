@@ -70,6 +70,12 @@ function operate(a, operator, b)
     return Math.round(result * 10) / 10;
 }
 
+// Returns true if it's ok, false otherwise
+function checkDisplay()
+{
+    return String(getDisplayValue()).length <= 16 ? true : false;
+}
+
 function addNumberDisplay(number)
 {
     if(op_btn_pressed)
@@ -77,6 +83,9 @@ function addNumberDisplay(number)
         clearDisplay();
         op_btn_pressed = false;
     }
+    
+    if(!checkDisplay())
+        return;
 
     if(display_value.textContent === "0")
         display_value.textContent = number;
@@ -145,6 +154,9 @@ function buildExpression(operator)
 
 function addDotDisplay()
 {
+    if(!checkDisplay())
+        return;
+
     if(display_value.textContent.match(/\./) === null)
         display_value.textContent += '.';
 }
@@ -174,8 +186,6 @@ btn_equality.addEventListener("click", calculateExpression);
 btn_dot.addEventListener("click", addDotDisplay);
 
 document.addEventListener("keydown", function (event) {
-    console.log(event);
-
     if(event.code.match(/Digit[0-9]/) && event.shiftKey == false)
         addNumberDisplay(event.key);
     else if(event.code === "Period")
