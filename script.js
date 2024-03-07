@@ -2,6 +2,10 @@ const display_value       = document.querySelector(".display");
 const btn_numbers         = document.querySelectorAll(".number");
 const btn_backspace       = document.querySelector("#backspace");
 const btn_clear           = document.querySelector("#clear");
+const btn_operators       = document.querySelectorAll(".operator");
+
+let expression     = [];
+let op_btn_pressed = false;
 
 function add(a, b)
 {
@@ -21,6 +25,11 @@ function multiply(a, b)
 function divide(a, b)
 {
     return a / b;
+}
+
+function remainder(a, b)
+{
+    return a % b;
 }
 
 function operate(a, operator, b)
@@ -45,6 +54,13 @@ function operate(a, operator, b)
 
             return divide(a, b);
         break;
+
+        case '%':
+            if(b == 0)
+                return NaN;
+
+            return remainder(a, b);
+        break;
     }
 }
 
@@ -67,13 +83,64 @@ function removeLastNumberDisplay()
     }
 }
 
+function clearDisplay()
+{
+    display_value.textContent = 0;
+}
+
+function getDisplayValue()
+{
+    return Number(display_value.textContent);
+}
+
+function calculateExpression()
+{
+    console.log(expression);
+    return operate(expression[0], expression[1], expression[2]);
+}
+
 // Update display based on number clicked on calculator
 btn_numbers.forEach(function (btn_number) {
-    btn_number.addEventListener("click", () => addNumberDisplay(btn_number.textContent));
+    btn_number.addEventListener("click", function () {
+        if(op_btn_pressed)
+        {
+            clearDisplay();
+            op_btn_pressed = false;
+        }
+
+        addNumberDisplay(btn_number.textContent);
+    })
 });
 
 // Pop the last number written on display
 btn_backspace.addEventListener("click", removeLastNumberDisplay);
 
 // Clear the display
-btn_clear.addEventListener("click", () => display_value.textContent = 0);
+btn_clear.addEventListener("click", function () {
+    clearDisplay(); 
+    expression = [];
+});
+
+// For all operators clicked on calculator, update the expression
+btn_operators.forEach(function (btn_operator) {
+    btn_operator.addEventListener("click", function () {
+        // There's an expression waiting to be calculated already.
+        if(expression[0] != undefined)
+        {
+            let expression_result;
+
+            // Calculate intermediate value 
+            expression.push(getDisplayValue());
+            expression_result = calculateExpression();
+            console.log(expression_result);
+            display_value.textContent = expression_result;
+
+            expression = [];
+            expression.push(expression_result, btn_operator.textContent);
+        }
+        else
+            expression.push(getDisplayValue(), btn_operator.textContent);
+
+        op_btn_pressed = true;
+    });
+})
